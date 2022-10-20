@@ -16,16 +16,19 @@
 
 ## Setup
 
-1. download [rclone](https://rclone.org/downloads/)
-2. extract the ZIP archive to a folder on your OneDrive
-3. reading rclone's excellent [manual](https://rclone.org/docs/) can't hurt :-)
+### Install rclone
 
-## Configuration (on every machine)
+1. clone this repository to a folder on your OneDrive
+2. download [rclone](https://rclone.org/downloads/)
+3. extract the ZIP archive and move its contents into the folder `.\rclone`
+4. reading rclone's excellent [manual](https://rclone.org/docs/) can't hurt :-)
+
+### Configuration (on every machine)
 
 1. add an alias to the unencrypted source, for example the directory `C:\Non-Cloud` (technically, this is not necessary, but helps to prevent backing up the wrong location):
 
 ```ps1
-$ ./rclone.exe config
+$ .\rclone\rclone.exe config
 ```
 
 ```plain
@@ -45,7 +48,7 @@ remote> C:\Non-Cloud
 2. if you also want to sync your `Downloads` folder, do this (change `<USER>` to your user name):
 
 ```ps1
-$ ./rclone.exe config
+$ .\rclone\rclone.exe config
 ```
 
 ```plain
@@ -68,7 +71,7 @@ remote> C:\Users\<USER>\Downloads
 3. add encrypted remote, in this case OneDrive (change `<USER>` to your user name):
 
 ```ps1
-$ ./rclone.exe config
+$ .\rclone\rclone.exe config
 ```
 
 ```plain
@@ -106,7 +109,7 @@ y/g/n> g
 Bits> 128
 ```
 
-4. create a (possibly empty) file `exclude_files.txt` in rclone's directory; I recommend excluding the following files:
+4. create a (possibly empty) file `exclude_files.txt` in the `.\sync` directory; I recommend excluding the following files:
 
 ```plain
 .~*
@@ -115,95 +118,22 @@ Bits> 128
 **/.git/objects/info/commit-graph
 ```
 
-## Backup to cloud (encrypt)
+## Usage
 
-Create a Windows batch script called `1-backup_to_cloud.bat` in your rclone folder:
+### Backup to cloud storage (encrypt)
 
-```ps1
-@ECHO Backup: %computername% -^> OneDrive
-@ECHO.
-@SET /P confirm="Do you want to backup to cloud (y/N)? "
-@IF /I "%confirm%" NEQ "y" EXIT 1
+Run the Windows batch script [sync/1-backup_to_cloud.bat](sync/1-backup_to_cloud.bat).
 
-@ECHO.
-@ECHO.
-@ECHO [NonCloud]
-@ECHO.
+### Restore from cloud storage (decrypt)
 
-@.\rclone.exe sync --progress NonCloud: OneCrypt:/Non-Cloud/ --exclude-from ".\exclude_files.txt"
+Run the Windows batch script [sync/2-restore_from_cloud.bat](sync/2-restore_from_cloud.bat).
 
-@ECHO.
-@ECHO.
-@ECHO [Downloads]
-@ECHO.
+### Check differences
 
-@.\rclone.exe sync --progress Downloads: OneCrypt:/Downloads/ --exclude-from ".\exclude_files.txt"
+Run the Windows batch script [sync/3-check_differences.bat](sync/3-check_differences.bat).
 
-@ECHO.
-@ECHO.
-
-@PAUSE
-```
-
-## Restore from cloud (decrypt)
-
-Create a Windows batch script called `2-restore_from_cloud.bat` in your rclone folder:
+### Upgrade rclone to latest version
 
 ```ps1
-@ECHO Restore: OneDrive -^> %computername%
-@ECHO.
-@SET /P confirm="Do you want to restore from cloud (y/N)? "
-@IF /I "%confirm%" NEQ "y" EXIT 1
-
-@ECHO.
-@ECHO.
-@ECHO [NonCloud]
-@ECHO.
-
-@.\rclone.exe sync --progress OneCrypt:/Non-Cloud/ NonCloud: --exclude-from ".\exclude_files.txt"
-
-@ECHO.
-@ECHO.
-@ECHO [Downloads]
-@ECHO.
-
-@.\rclone.exe sync --progress OneCrypt:/Downloads/ Downloads: --exclude-from ".\exclude_files.txt"
-
-@ECHO.
-@ECHO.
-
-@PAUSE
-```
-
-## Check differences
-
-Create a Windows batch script called `3-check_differences.bat` in your rclone folder:
-
-```ps1
-@ECHO Looking for differences ...
-
-@ECHO.
-@ECHO.
-@ECHO [NonCloud]
-@ECHO.
-
-@.\rclone.exe check --download NonCloud: OneCrypt:/Non-Cloud/ --exclude-from ".\exclude_files.txt"
-
-@ECHO.
-@ECHO.
-@ECHO [Downloads]
-@ECHO.
-
-@.\rclone.exe check --download Downloads: OneCrypt:/Downloads/ --exclude-from ".\exclude_files.txt"
-
-@ECHO.
-@ECHO.
-
-@PAUSE
-```
-
-## Upgrade rclone to latest version
-
-```ps1
-.\rclone selfupdate
+.\rclone\rclone.exe selfupdate
 ```
