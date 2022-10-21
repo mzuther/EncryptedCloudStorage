@@ -1,5 +1,13 @@
 # Save encrypted data on cloud storage using rclone
 
+## Introduction
+
+This document describes a setup to synchronize secret data to cloud storage in a way that the cloud provider does not have access to the original files. All files in a local folder (`C:\Non-Cloud`) are read, encrypted on the fly, and stored to a folder that is synchronized by a cloud storage client application such as OneDrive (`C:\Users\<USER>\OneDrive\Personal Data\OneCrypt`). Restoring and decrypting files works analogously.
+
+The cloud storage client application will undertake the actual synchronization, but will never see the decrypted files. Encryption keys are stored on the local system - but please take care that the folder they reside in is not inadvertently stored in the cloud!
+
+With a little effort, this setup can also be modified to synchronize to the cloud directly without using a client application.
+
 ## General notes
 
 - save all passwords and salts in a password safe such as [KeePass](https://keepass.info/)!
@@ -25,7 +33,7 @@
 
 ### Configuration (on every machine)
 
-1. add an alias to the unencrypted source, for example the directory `C:\Non-Cloud` (technically, this is not necessary, but helps to prevent backing up the wrong location):
+1. add an alias to the unencrypted source folder (technically, this is not necessary, but helps to prevent backing up the wrong location):
 
 ```ps1
 $ .\rclone\rclone.exe config
@@ -45,7 +53,7 @@ Storage> alias
 remote> C:\Non-Cloud
 ```
 
-2. if you also want to sync your `Downloads` folder, do this (change `<USER>` to your user name):
+2. if you also want to sync your `Downloads` folder, add a second alias (change `<USER>` to your user name):
 
 ```ps1
 $ .\rclone\rclone.exe config
@@ -68,7 +76,7 @@ Storage> alias
 remote> C:\Users\<USER>\Downloads
 ```
 
-3. add encrypted remote, in this case OneDrive (change `<USER>` to your user name):
+3. add encrypted remote folder, in this case OneDrive (change `<USER>` to your user name):
 
 ```ps1
 $ .\rclone\rclone.exe config
@@ -109,7 +117,7 @@ y/g/n> g
 Bits> 128
 ```
 
-4. create a (possibly empty) file `exclude_files.txt` in the `.\sync` directory; I recommend excluding the following files:
+4. create a (possibly empty) file `exclude_files.txt` in the `.\sync` folder; I recommend excluding the following files:
 
 ```plain
 .~*
@@ -119,6 +127,8 @@ Bits> 128
 ```
 
 ## Usage
+
+Note: the scripts in this section will also synchronize your `Downloads` folder. So you have to either set it up as described above or change the scripts.
 
 ### Backup to cloud storage (encrypt)
 
