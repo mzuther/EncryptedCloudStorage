@@ -117,14 +117,7 @@ y/g/n> g
 Bits> 128
 ```
 
-4. create a (possibly empty) file `exclude_files.txt` in the `.\sync` folder; I recommend excluding the following files:
-
-```plain
-.~*
-.$*
-[Dd]esktop.ini
-**/.git/objects/info/commit-graph
-```
+4. create a (possibly empty) file `exclude_files.txt` in the `.\sync` folder - see the file `./sync/exclude_files.txt.orig` for some recommended exclusions
 
 ## Usage
 
