@@ -1,5 +1,8 @@
 .~*
 .$*
+*.pyc
 .RProj.user/
+.venv/
+venv/
 [Dd]esktop.ini
 **/.git/objects/info/commit-graph
